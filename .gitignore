@@ -32,6 +32,9 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Generated Dart files
+**/*.g.dart
+
 # Symbolication related
 app.*.symbols
 
@@ -42,3 +45,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+/lib/app/config/app_config.g.dart
+
+.env.dev
+.env.prod
+.env.stg
+
+/lib/gen/
+/lib/app/router/app_router.gr.dart
