@@ -14,3 +14,13 @@ class AuthenticationError extends AuthenticationState {
 
   AuthenticationError({this.errorMessage});
 }
+
+class LogoutLoading extends AuthenticationState {}
+
+class LogoutSuccess extends AuthenticationState {}
+
+class LogoutError extends AuthenticationState {
+  final String? errorMessage;
+
+  LogoutError({this.errorMessage});
+}

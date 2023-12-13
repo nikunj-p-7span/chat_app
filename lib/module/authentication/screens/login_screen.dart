@@ -72,8 +72,10 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             BlocConsumer<AuthenticationBloc, AuthenticationState>(
               listener: (context, state) {
-                if(state is AuthenticationSuccess){
-                  context.pushRoute(const ChatRoute());
+                if (state is AuthenticationSuccess) {
+                  context.router.replaceAll(
+                    [const ChatRoute()],
+                  );
                 }
               },
               builder: (context, state) {
@@ -82,33 +84,37 @@ class _LoginScreenState extends State<LoginScreen> {
                   customWidth: MediaQuery.of(context).size.width / 1.7,
                   borderColor: Colors.black,
                   radius: 12,
-                  buttonState:
-                      state is AuthenticationLoading ? ButtonState.inProgress : ButtonState.normal,
                   onPressed: () {
                     context.read<AuthenticationBloc>().add(const SingInWithGoogleEvent());
                   },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/ic_google.png',
-                        height: 40,
-                        width: 40,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Text(
-                        "Signin with Google",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black,
+                  child: state is AuthenticationLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(),
+                        )
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/ic_google.png',
+                              height: 40,
+                              width: 40,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            const Text(
+                              "Signin with Google",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w300,
+                                color: Colors.black,
+                              ),
+                            )
+                          ],
                         ),
-                      )
-                    ],
-                  ),
                 );
               },
             ),

@@ -11,3 +11,7 @@ final class SingInWithGoogleEvent extends AuthenticationEvent {
   const SingInWithGoogleEvent();
 }
 
+final class LogoutEvent extends AuthenticationEvent {
+  const LogoutEvent();
+}
+
