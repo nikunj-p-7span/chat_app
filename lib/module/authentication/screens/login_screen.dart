@@ -88,6 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     context.read<AuthenticationBloc>().add(const SingInWithGoogleEvent());
                   },
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
