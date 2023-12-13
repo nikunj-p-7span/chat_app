@@ -5,15 +5,8 @@ import 'package:chat_app/router/app_router.gr.dart';
 class AppRouter extends $AppRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(
-          initial: true,
-          page: SplashRoute.page,
-          path: '/'
-        ),
-        AutoRoute(
-          page: LoginRoute.page,
-          path: '/login'
-        ),
+        AutoRoute(initial: true, page: SplashRoute.page, path: '/'),
+        AutoRoute(page: LoginRoute.page, path: '/login'),
         AutoRoute(
           page: ChatRoute.page,
           path: '/chat',

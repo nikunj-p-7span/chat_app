@@ -9,8 +9,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i4;
-import 'package:chat_app/module/authentication/screens/login_screen.dart'
-    as _i3;
+import 'package:chat_app/module/authentication/screens/login_screen.dart' as _i3;
 import 'package:chat_app/module/chat/screens/chat_screen.dart' as _i1;
 import 'package:chat_app/module/detail/screen/detail_screen.dart' as _i2;
 import 'package:flutter/material.dart' as _i5;
@@ -83,8 +82,7 @@ class DetailRoute extends _i4.PageRouteInfo<DetailRouteArgs> {
 
   static const String name = 'DetailRoute';
 
-  static const _i4.PageInfo<DetailRouteArgs> page =
-      _i4.PageInfo<DetailRouteArgs>(name);
+  static const _i4.PageInfo<DetailRouteArgs> page = _i4.PageInfo<DetailRouteArgs>(name);
 }
 
 class DetailRouteArgs {
