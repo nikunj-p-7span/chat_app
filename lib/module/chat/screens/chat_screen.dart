@@ -1,14 +1,35 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app/module/authentication/bloc/authentication_bloc.dart';
+import 'package:chat_app/module/authentication/repository/authentication_repository.dart';
 import 'package:chat_app/router/app_router.gr.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends StatefulWidget implements AutoRouteWrapper {
   const ChatScreen({super.key});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
+
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => AuthenticationRepository(),
+        ),
+        BlocProvider(
+          create: (context) => AuthenticationBloc(
+            authenticationRepository: context.read<AuthenticationRepository>(),
+          ),
+          child: this,
+        ),
+      ],
+      child: this,
+    );
+  }
 }
 
 class _ChatScreenState extends State<ChatScreen> {
@@ -41,11 +62,33 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ),
+        actions: [
+          BlocConsumer<AuthenticationBloc, AuthenticationState>(
+            listener: (context, state) {
+              if (state is LogoutSuccess) {
+                context.router.replaceAll([const LoginRoute()]);
+              }
+            },
+            builder: (context, state) {
+              return IconButton(
+                onPressed: () {
+                  context.read<AuthenticationBloc>().add(const LogoutEvent());
+                },
+                icon: const Icon(
+                  Icons.logout,
+                  color: Colors.white,
+                ),
+              );
+            },
+          ),
+        ],
         backgroundColor: Colors.lightBlueAccent,
-        title: const Text('Conversation',
-            style: TextStyle(
-              color: Colors.white,
-            )),
+        title: const Text(
+          'Conversation',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         elevation: 1,
         scrolledUnderElevation: 1,
         // backgroundColor: backgroundColor ?? context.colorScheme.background,

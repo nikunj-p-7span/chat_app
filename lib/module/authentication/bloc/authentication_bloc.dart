@@ -12,6 +12,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
 
   AuthenticationBloc({required this.authenticationRepository}) : super(AuthenticationInitial()) {
     on<SingInWithGoogleEvent>(_onSignInWithGoogle);
+    on<LogoutEvent>(_onLogout);
   }
 
   Future<void> _onSignInWithGoogle(
@@ -23,6 +24,20 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     } catch (e) {
       emit(
         AuthenticationError(
+          errorMessage: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onLogout(LogoutEvent event, Emitter<AuthenticationState> emit) async {
+    try {
+      emit(LogoutLoading());
+      await authenticationRepository.logout();
+      emit(LogoutSuccess());
+    } catch (e) {
+      emit(
+        LogoutError(
           errorMessage: e.toString(),
         ),
       );

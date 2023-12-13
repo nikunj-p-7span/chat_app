@@ -41,4 +41,8 @@ class AuthenticationRepository {
       debugPrint('Error adding user data: $e');
     }
   }
+
+  Future<void> logout() async {
+    await _auth.signOut();
+  }
 }
