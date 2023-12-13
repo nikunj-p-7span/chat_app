@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app/app/helpers/mixins/pagination_mixin.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
@@ -17,13 +19,14 @@ class DetailScreen extends StatefulWidget {
   State<DetailScreen> createState() => _DetailScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen> {
+class _DetailScreenState extends State<DetailScreen> with PaginationService {
   TextEditingController messageWritten = TextEditingController();
   List<String> messages = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.lightBlueAccent,
         leading: BackButton(
@@ -96,84 +99,89 @@ class _DetailScreenState extends State<DetailScreen> {
         // backgroundColor: backgroundColor ?? context.colorScheme.background,
         centerTitle: false,
       ),
-      body: Stack(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              StatefulBuilder(
-                builder: (context, setState) {
-                  return Expanded(
-                    child: ListView.builder(
-                      itemCount: messages.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(20)),
-                                color: Colors.lightBlueAccent,
+          StatefulBuilder(
+            builder: (context, setState) {
+              return Expanded(
+                child: ListView.builder(
+                  dragStartBehavior: DragStartBehavior.start,
+                  controller: scrollController,
+                  itemCount: messages.length,
+                  shrinkWrap: false,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              ///TODO: message per border ui
+                              borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(0),
+                                bottomLeft: Radius.circular(20),
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
                               ),
-                              child: Text(
-                                messages[index],
-                                style: const TextStyle(color: Colors.white),
-                              )),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 75,
-              )
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1,
-                    )),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: const InputDecoration(
-                          enabledBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          border: InputBorder.none,
-                        ),
-                        controller: messageWritten,
-                        style: const TextStyle(color: Colors.black, fontSize: 18),
+                              color: Colors.lightBlueAccent,
+                            ),
+                            child: Text(
+                              messages[index],
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          setState(() {
-                            messages.add(messageWritten.text);
-                          });
-                          messageWritten.clear();
-                        },
-                        icon: const Icon(
-                          Icons.send,
-                          color: Colors.lightBlueAccent,
-                        ))
-                  ],
+                    );
+                  },
                 ),
-              ),
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    maxLines: 5,
+                    minLines: 1,
+                    keyboardType: TextInputType.multiline,
+                    decoration: InputDecoration(
+                      filled: true,
+                      focusColor: Colors.white,
+                      fillColor: Colors.white,
+                      hoverColor: Colors.white,
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              messages.add(messageWritten.text);
+                            });
+                            messageWritten.clear();
+                          },
+                          icon: const Icon(
+                            Icons.send,
+                            color: Colors.lightBlueAccent,
+                          )),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                      disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                    ),
+                    controller: messageWritten,
+                    style: const TextStyle(color: Colors.black, fontSize: 18),
+                  ),
+                ),
+              ],
             ),
           )
         ],
       ),
     );
   }
+
+  @override
+  void onEndScroll() {}
 }
