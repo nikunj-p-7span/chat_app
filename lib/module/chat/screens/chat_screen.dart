@@ -2,6 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/module/authentication/bloc/authentication_bloc.dart';
 import 'package:chat_app/module/authentication/repository/authentication_repository.dart';
+import 'package:chat_app/module/chat/bloc/chat_listing_bloc.dart';
+import 'package:chat_app/module/chat/bloc/chat_listing_event.dart';
+import 'package:chat_app/module/chat/bloc/chat_listing_state.dart';
+import 'package:chat_app/module/chat/repository/chat_listing_repository.dart';
 import 'package:chat_app/router/app_router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,11 +24,16 @@ class ChatScreen extends StatefulWidget implements AutoRouteWrapper {
         RepositoryProvider(
           create: (context) => AuthenticationRepository(),
         ),
+        RepositoryProvider(
+          create: (context) => ChatListingRepository(),
+        ),
+        BlocProvider(
+          create: (context) => ChatListingBloc(chatListingRepository: context.read<ChatListingRepository>()),
+        ),
         BlocProvider(
           create: (context) => AuthenticationBloc(
             authenticationRepository: context.read<AuthenticationRepository>(),
           ),
-          child: this,
         ),
       ],
       child: this,
@@ -33,6 +42,14 @@ class ChatScreen extends StatefulWidget implements AutoRouteWrapper {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final chatListingRepository = ChatListingRepository();
+
+  @override
+  void initState() {
+    getUsers();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,43 +125,58 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
-        child: ListView.builder(
-          itemCount: 10,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                context.pushRoute(DetailRoute(
-                    isOnline: 'online',
-                    name: 'Name',
-                    imageUrl:
-                        'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aHVtYW58ZW58MHx8MHx8fDA%3D'));
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 8,
-                ),
-                child: ListTile(
-                    title: const Text('Name'),
-                    tileColor: Colors.grey.shade100,
+        child: BlocBuilder<ChatListingBloc, ChatListingState>(
+          builder: (context, state) {
+            switch (state.status) {
+              case ApiStatus.initial:
+              case ApiStatus.loading:
+              case ApiStatus.loaded:
+                return ListView.builder(
+                  itemCount: state.userList.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        context.pushRoute(DetailRoute(
+                          isOnline: 'online',
+                          name: state.userList[index].displayName,
+                          imageUrl: state.userList[index].photoUrl,
+                        ));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 8,
+                        ),
+                        child: ListTile(
+                            title: Text(state.userList[index].displayName ?? 'Abc'),
+                            tileColor: Colors.grey.shade100,
 
-                    ///ADD last message
-                    subtitle: const Text('Last Message'),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(200),
-                      child: CachedNetworkImage(
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                        imageUrl:
-                            'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aHVtYW58ZW58MHx8MHx8fDA%3D',
+                            ///ADD last message
+                            subtitle: const Text('Last Message'),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(200),
+                              child: CachedNetworkImage(
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                imageUrl: state.userList[index].photoUrl ??
+                                    'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aHVtYW58ZW58MHx8MHx8fDA%3D',
+                              ),
+                            )),
                       ),
-                    )),
-              ),
-            );
+                    );
+                  },
+                );
+              case ApiStatus.error:
+                return Center(child: Text(state.message));
+            }
           },
         ),
       ),
     );
+  }
+
+  void getUsers() {
+    context.read<ChatListingBloc>().add(const GetChatListEvent());
   }
 }

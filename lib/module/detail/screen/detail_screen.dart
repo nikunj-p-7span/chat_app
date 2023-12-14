@@ -76,9 +76,9 @@ class _DetailScreenState extends State<DetailScreen> with PaginationService {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Chat Details',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                Text(
+                  widget.name ?? '',
+                  style: const TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 Text(
                   widget.isOnline ?? '',

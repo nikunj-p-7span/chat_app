@@ -1,4 +1,3 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/module/authentication/bloc/authentication_bloc.dart';
 import 'package:chat_app/module/authentication/repository/authentication_repository.dart';
