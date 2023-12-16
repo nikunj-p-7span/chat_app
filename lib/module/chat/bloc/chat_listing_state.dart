@@ -1,3 +1,4 @@
+import 'package:chat_app/app/core/utils/app_utils.dart';
 import 'package:chat_app/module/chat/model/user_model.dart';
 import 'package:equatable/equatable.dart';
 
@@ -24,5 +25,3 @@ class ChatListingState extends Equatable {
 
   const ChatListingState.error({required String message}) : this._(status: ApiStatus.error, message: message);
 }
-
-enum ApiStatus { initial, loading, loaded, error }

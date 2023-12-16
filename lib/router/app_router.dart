@@ -12,14 +12,14 @@ class AppRouter extends $AppRouter {
           path: '/chat',
           children: [
             AutoRoute(
-              page: DetailRoute.page,
-              path: 'detail',
+              page: MessagesRoute.page,
+              path: 'messages',
             )
           ],
         ),
         AutoRoute(
-          page: DetailRoute.page,
-          path: '/detail',
+          page: MessagesRoute.page,
+          path: '/messages',
         )
       ];
 }

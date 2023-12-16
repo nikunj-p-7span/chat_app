@@ -1,5 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app/app/core/data/UserDetail.dart';
+import 'package:chat_app/app/core/utils/app_utils.dart';
+import 'package:chat_app/boxes.dart';
 import 'package:chat_app/module/authentication/bloc/authentication_bloc.dart';
 import 'package:chat_app/module/authentication/repository/authentication_repository.dart';
 import 'package:chat_app/module/chat/bloc/chat_listing_bloc.dart';
@@ -136,7 +139,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        context.pushRoute(DetailRoute(
+                        context.pushRoute(MessagesRoute(
+                          convoId: getChatId(peerId: state.userList[index].id ?? ''),
+                          idTo: state.userList[index].id,
                           isOnline: 'online',
                           name: state.userList[index].displayName,
                           imageUrl: state.userList[index].photoUrl,
@@ -168,7 +173,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 );
               case ApiStatus.error:
-                return Center(child: Text(state.message));
+                return Center(
+                    child: Text(
+                  state.message,
+                  style: const TextStyle(color: Colors.red),
+                ));
             }
           },
         ),
@@ -178,5 +187,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void getUsers() {
     context.read<ChatListingBloc>().add(const GetChatListEvent());
+  }
+
+  String getChatId({required String peerId}) {
+    UserDetail userDetail = boxUserDetail.get('UserDetail1');
+    if (userDetail.uid.hashCode <= peerId.hashCode) {
+      return '${userDetail.uid}_$peerId';
+    } else {
+      return '${peerId}_${userDetail.uid}';
+    }
   }
 }
