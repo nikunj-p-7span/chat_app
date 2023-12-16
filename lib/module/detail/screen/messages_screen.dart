@@ -168,7 +168,6 @@ class _MessagesScreenState extends State<MessagesScreen> with PaginationService 
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  ///TODO: message per border ui
                                   borderRadius: BorderRadius.only(
                                     bottomRight: state.messagesList[index].idFrom == userDetail.uid
                                         ? const Radius.circular(0)

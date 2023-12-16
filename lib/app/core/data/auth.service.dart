@@ -15,12 +15,8 @@ final class AuthService implements IAuthService {
   const AuthService();
 
   @override
-  setUserData(User user) {
-    // TODO: implement setUserData
-  }
+  setUserData(User user) {}
 
   @override
-  init() {
-    // TODO: implement init
-  }
+  init() {}
 }

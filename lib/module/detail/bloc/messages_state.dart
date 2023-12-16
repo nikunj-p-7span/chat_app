@@ -14,7 +14,6 @@ class MessagesState extends Equatable {
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [message, status, messagesList];
 
   const MessagesState.initial() : this._(status: ApiStatus.initial);
